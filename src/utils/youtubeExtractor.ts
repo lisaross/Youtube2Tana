@@ -16,7 +16,8 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       throw new Error('Not a YouTube video page. Please make sure you have a YouTube video page open and active.');
     }
 
-    console.log('Active tab:', activeTab); // Debug log
+    const videoUrl = activeTab.url;
+    console.log('Video URL:', videoUrl); // Debug log
 
     // Extract title
     const title = await BrowserExtension.getContent({ 
@@ -109,6 +110,7 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       title: title.trim(),
       channelName: channelName,
       channelUrl: fullChannelUrl,
+      videoUrl: videoUrl,
       description: cleanedDescription,
     };
 
