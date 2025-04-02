@@ -27,12 +27,12 @@ A Raycast extension that extracts metadata from YouTube videos and formats it fo
 
 1. Clone this repository:
 ```bash
-git clone https://github.com/yourusername/youtube-to-tana.git
+git clone https://github.com/lisaross/Youtube2Tana.git
 ```
 
 2. Navigate to the project directory:
 ```bash
-cd youtube-to-tana
+cd Youtube2Tana
 ```
 
 3. Install dependencies:
