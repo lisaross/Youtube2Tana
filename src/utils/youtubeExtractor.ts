@@ -8,19 +8,38 @@ import { VideoInfo } from '../types/video';
  */
 export async function extractVideoInfo(): Promise<VideoInfo> {
   try {
-    // Get the current tab
+    // Get all tabs and find a suitable YouTube tab
     const tabs = await BrowserExtension.getTabs();
-    const activeTab = tabs.find(tab => tab.active);
+    console.log(`Found ${tabs.length} browser tabs`);
     
-    console.log('All tabs:', tabs.map(tab => ({ url: tab.url, active: tab.active })));
-    console.log('Active tab found:', activeTab);
+    // First look for active YouTube tabs
+    let youtubeTab = tabs.find(tab => tab.active && tab.url?.includes('youtube.com/watch'));
     
-    if (!activeTab?.url?.includes('youtube.com/watch')) {
-      throw new Error('Not a YouTube video page. Please make sure you have a YouTube video page open and active.');
+    // If no active YouTube tab, try to find any YouTube tab
+    if (!youtubeTab) {
+      console.log('No active YouTube tab found, looking for any YouTube tab');
+      youtubeTab = tabs.find(tab => tab.url?.includes('youtube.com/watch'));
     }
-
-    const videoUrl = activeTab.url;
-    console.log('Video URL extracted from tab:', videoUrl); // Debug log
+    
+    // If still no YouTube tab, throw an error
+    if (!youtubeTab) {
+      throw new Error('No YouTube video page found. Please make sure you have a YouTube video page open.');
+    }
+    
+    console.log('Using YouTube tab:', youtubeTab.title);
+    console.log('Tab URL:', youtubeTab.url);
+    
+    // Get the video URL
+    const videoUrl = youtubeTab.url;
+    
+    // Extract video ID for verification
+    const videoIdMatch = videoUrl.match(/[?&]v=([^&]+)/);
+    if (!videoIdMatch) {
+      throw new Error('Could not extract video ID from URL. Please try again with a valid YouTube video.');
+    }
+    
+    const videoId = videoIdMatch[1];
+    console.log('Extracted video ID:', videoId);
 
     // Extract title
     const title = await BrowserExtension.getContent({ 
@@ -28,7 +47,7 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       format: 'text' 
     });
 
-    console.log('Found title:', title); // Debug log
+    console.log('Found title:', title); 
 
     if (!title) {
       throw new Error('Could not find video title. Please make sure the video page is fully loaded.');
@@ -40,7 +59,7 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       format: 'html' 
     });
 
-    console.log('Found channel element:', channelElement); // Debug log
+    console.log('Found channel element:', channelElement); 
 
     if (!channelElement) {
       throw new Error('Could not find channel information. Please make sure the video page is fully loaded.');
@@ -57,15 +76,13 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
     const channelUrl = hrefMatch[1];
     const channelName = textMatch[1].trim();
 
-    console.log('Extracted channel name:', channelName); // Debug log
-    console.log('Extracted channel URL:', channelUrl); // Debug log
+    console.log('Extracted channel name:', channelName);
+    console.log('Extracted channel URL:', channelUrl);
 
     // Format the channel URL
     const fullChannelUrl = channelUrl.startsWith('http') 
       ? channelUrl 
       : `https://www.youtube.com${channelUrl}`;
-
-    console.log('Formatted channel URL:', fullChannelUrl); // Debug log
 
     // Extract description - try multiple selectors for expanded content
     const descriptionSelectors = [
@@ -83,7 +100,6 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
         cssSelector: selector, 
         format: 'text'
       });
-      console.log(`Trying selector ${selector}:`, description); // Debug log
       if (description) {
         workingSelector = selector;
         break;
@@ -94,7 +110,7 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       throw new Error('Could not find video description. Please make sure the video page is fully loaded and the description is visible.');
     }
 
-    console.log('Working selector:', workingSelector); // Debug log
+    console.log('Using description selector:', workingSelector);
 
     // Clean up the description
     const cleanedDescription = description
@@ -105,9 +121,6 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       .replace(/^\s+|\s+$/g, '') // Trim whitespace from start and end
       .trim();
 
-    console.log('Cleaned description:', cleanedDescription); // Debug log
-    console.log('Description length:', cleanedDescription.length); // Debug log
-
     // Create a VideoInfo object with all the extracted data
     const videoInfo = {
       title: title.trim(),
@@ -117,10 +130,6 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       description: cleanedDescription,
     };
     
-    console.log('Final VideoInfo object before returning:', videoInfo);
-    console.log('Final video URL being returned:', videoInfo.videoUrl);
-
-    // Return complete VideoInfo
     return videoInfo;
 
   } catch (error) {

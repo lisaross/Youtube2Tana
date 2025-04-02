@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed issue where toast message displayed the channel URL instead of the video URL
+- Improved browser tab detection to correctly identify the YouTube video tab, even in multi-window browsers like Arc
 - Removed duplicate command file to avoid potential conflicts
 
 ## [1.0.0] - 2025-03-20
