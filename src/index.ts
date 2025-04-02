@@ -27,7 +27,7 @@ export default async function Command(): Promise<void> {
     await showToast({
       style: Toast.Style.Success,
       title: "Video information copied!",
-      message: `Title: ${videoInfo.title}\nChannel: ${videoInfo.channelName}\nURL: ${videoInfo.channelUrl}\n\nDescription Preview:\n${descriptionPreview}`,
+      message: `Title: ${videoInfo.title}\nChannel: ${videoInfo.channelName}\nURL: ${videoInfo.videoUrl}\n\nDescription Preview:\n${descriptionPreview}`,
     });
   } catch (error) {
     // Error handling is now done in extractVideoInfo

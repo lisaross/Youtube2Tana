@@ -6,6 +6,10 @@ import { VideoInfo } from "../types/video";
  * @returns Formatted string ready to be pasted into Tana
  */
 export function formatForTana(videoInfo: VideoInfo): string {
+  // Debug logs to see what URL data is coming in
+  console.log('Video URL being used in formatter:', videoInfo.videoUrl);
+  console.log('Channel URL being used in formatter:', videoInfo.channelUrl);
+  
   // Split description into paragraphs and format as nodes
   const [firstParagraph, ...restContent] = videoInfo.description
     .split('\n')
@@ -15,10 +19,14 @@ export function formatForTana(videoInfo: VideoInfo): string {
     ? `${firstParagraph}\n${restContent.map(line => `    - ${line}`).join('\n')}`
     : firstParagraph;
 
-  return `%%tana%%
+  // Create final formatted string with debug comment
+  const formattedString = `%%tana%%
 - ${videoInfo.title} #video
   - URL::${videoInfo.videoUrl}
   - Channel URL::${videoInfo.channelUrl}
   - Author::${videoInfo.channelName}
   - Description::${formattedDescription}`;
+  
+  console.log('Final formatted output:', formattedString);
+  return formattedString;
 } 

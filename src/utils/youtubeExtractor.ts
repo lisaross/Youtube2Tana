@@ -12,12 +12,15 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
     const tabs = await BrowserExtension.getTabs();
     const activeTab = tabs.find(tab => tab.active);
     
+    console.log('All tabs:', tabs.map(tab => ({ url: tab.url, active: tab.active })));
+    console.log('Active tab found:', activeTab);
+    
     if (!activeTab?.url?.includes('youtube.com/watch')) {
       throw new Error('Not a YouTube video page. Please make sure you have a YouTube video page open and active.');
     }
 
     const videoUrl = activeTab.url;
-    console.log('Video URL:', videoUrl); // Debug log
+    console.log('Video URL extracted from tab:', videoUrl); // Debug log
 
     // Extract title
     const title = await BrowserExtension.getContent({ 
@@ -105,14 +108,20 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
     console.log('Cleaned description:', cleanedDescription); // Debug log
     console.log('Description length:', cleanedDescription.length); // Debug log
 
-    // Return complete VideoInfo
-    return {
+    // Create a VideoInfo object with all the extracted data
+    const videoInfo = {
       title: title.trim(),
       channelName: channelName,
       channelUrl: fullChannelUrl,
       videoUrl: videoUrl,
       description: cleanedDescription,
     };
+    
+    console.log('Final VideoInfo object before returning:', videoInfo);
+    console.log('Final video URL being returned:', videoInfo.videoUrl);
+
+    // Return complete VideoInfo
+    return videoInfo;
 
   } catch (error) {
     // Show a persistent error toast with more details
