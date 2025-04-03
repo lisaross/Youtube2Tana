@@ -9,7 +9,7 @@ export interface VideoInfo {
   /** The URL of the channel */
   channelUrl: string;
   /** The URL of the video */
-  videoUrl: string;
+  url: string;
   /** The video description */
   description: string;
 } 

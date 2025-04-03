@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Comprehensive testing setup with Vitest
+- Unit tests for utility functions
+- Test coverage reporting
+- Mock implementations for browser APIs
+- Test documentation in README
+
 ## [1.0.0] - 2025-03-20
 
 ### Added

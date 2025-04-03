@@ -16,8 +16,8 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       throw new Error('Not a YouTube video page. Please make sure you have a YouTube video page open and active.');
     }
 
-    const videoUrl = activeTab.url;
-    console.log('Video URL:', videoUrl); // Debug log
+    const url = activeTab.url;
+    console.log('Video URL:', url); // Debug log
 
     // Extract title
     const title = await BrowserExtension.getContent({ 
@@ -54,7 +54,7 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
     const channelUrl = hrefMatch[1];
     const channelName = textMatch[1].trim();
 
-    console.log('Extracted channel name:', channelName); // Debug log
+    console.log('Extracted channel name:', channelName);
     console.log('Extracted channel URL:', channelUrl); // Debug log
 
     // Format the channel URL
@@ -99,18 +99,20 @@ export async function extractVideoInfo(): Promise<VideoInfo> {
       .replace(/Show less$/, '') // Remove "Show less" text if present
       .replace(/^\s*\.{3}\s*/, '') // Remove leading ellipsis
       .replace(/\s*\.{3}$/, '') // Remove trailing ellipsis
+      .replace(/^\s*Show more\s*\n?/, '') // Remove "Show more" at start
+      .replace(/\n?\s*Show less\s*$/, '') // Remove "Show less" at end
       .replace(/^\s+|\s+$/g, '') // Trim whitespace from start and end
       .trim();
 
     console.log('Cleaned description:', cleanedDescription); // Debug log
-    console.log('Description length:', cleanedDescription.length); // Debug log
+    console.log('Description length:', cleanedDescription.length);
 
     // Return complete VideoInfo
     return {
       title: title.trim(),
       channelName: channelName,
       channelUrl: fullChannelUrl,
-      videoUrl: videoUrl,
+      url: url,
       description: cleanedDescription,
     };
 

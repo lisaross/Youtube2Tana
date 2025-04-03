@@ -99,6 +99,57 @@ This extension:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Testing
+
+This project uses [Vitest](https://vitest.dev/) for testing. The test suite includes:
+
+- Unit tests for utility functions
+- Mock implementations of browser APIs
+- Test coverage reporting
+
+### Running Tests
+
+```bash
+# Run tests in watch mode
+npm test
+
+# Run tests once
+npm run test:coverage
+
+# Run tests with UI
+npm run test:ui
+```
+
+### Test Structure
+
+Tests are organized in `__tests__` directories alongside their source files:
+
+```
+src/
+  utils/
+    __tests__/
+      browserWrapper.test.ts
+      tanaFormatter.test.ts
+      youtubeExtractor.test.ts
+    browserWrapper.ts
+    tanaFormatter.ts
+    youtubeExtractor.ts
+```
+
+### Test Coverage
+
+Test coverage reports are generated in the `coverage` directory. The coverage includes:
+
+- Line coverage
+- Function coverage
+- Branch coverage
+
+To view the coverage report:
+
+```bash
+npm run test:coverage
+```
+
 ---
 
 Made with ❤️ for Tana enthusiasts
